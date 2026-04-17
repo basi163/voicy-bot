@@ -49,6 +49,7 @@
   "error_processing": "❌ 处理音频时出错。请重试。",
   "error_generic": "❌ 发生错误。请稍后重试。",
   "unsupported_format": "⚠️ 不支持的格式。请发送语音消息或音频文件（MP3、OGG、WAV、M4A、FLAC）。",
+  "file_too_big": "⚠️ <b>文件太大。</b>\n\nTelegram 只允许机器人下载最大 <b>20 MB</b> 的文件。\n\n请压缩文件或裁剪录音后重新发送。",
   "cmd_menu_desc": "主菜单",
   "cmd_settings_desc": "语言设置",
   "cmd_transcript_desc": "我的录音和转录",

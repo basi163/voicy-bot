@@ -27,6 +27,7 @@ SUPPORTED_MIME_TYPES = {
 SUPPORTED_EXTENSIONS = {".mp3", ".ogg", ".wav", ".flac", ".m4a", ".aac", ".mp4", ".opus"}
 
 MAX_TELEGRAM_DURATION = 59 * 60  # 59 минут в секундах
+MAX_FILE_SIZE = 20 * 1024 * 1024  # 20 МБ — лимит Telegram Bot API
 
 
 def result_keyboard(lang: str, msg_id: int) -> InlineKeyboardMarkup:
@@ -55,6 +56,9 @@ async def handle_audio(message: Message, bot: Bot, db_user: User, lang: str):
     if mime and mime not in SUPPORTED_MIME_TYPES and not mime.startswith("audio/"):
         await message.answer(t(lang, "unsupported_format"), parse_mode="HTML")
         return
+    if audio.file_size and audio.file_size > MAX_FILE_SIZE:
+        await message.answer(t(lang, "file_too_big"), parse_mode="HTML")
+        return
     ext = _ext_from_mime(mime)
     await _process_audio(
         message=message, bot=bot, db_user=db_user, lang=lang,
@@ -80,6 +84,10 @@ async def handle_document(message: Message, bot: Bot, db_user: User, lang: str):
     is_audio_mime = mime.startswith("audio/") or mime in SUPPORTED_MIME_TYPES
     if not is_audio_mime and not ext:
         # Не аудиофайл — тихо игнорируем (не отвечаем на любые документы)
+        return
+
+    if doc.file_size and doc.file_size > MAX_FILE_SIZE:
+        await message.answer(t(lang, "file_too_big"), parse_mode="HTML")
         return
 
     if not ext:

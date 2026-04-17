@@ -49,6 +49,7 @@
   "error_processing": "❌ Error processing audio. Please try again.",
   "error_generic": "❌ An error occurred. Please try again later.",
   "unsupported_format": "⚠️ Unsupported format. Send a voice message or audio file (MP3, OGG, WAV, M4A, FLAC).",
+  "file_too_big": "⚠️ <b>File is too large.</b>\n\nTelegram only allows bots to download files up to <b>20 MB</b>.\n\nPlease compress the file or trim the recording and send it again.",
   "cmd_menu_desc": "Main menu",
   "cmd_settings_desc": "Language settings",
   "cmd_transcript_desc": "My recordings and transcriptions",
