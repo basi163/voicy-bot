@@ -24,6 +24,8 @@ SUPPORTED_MIME_TYPES = {
     "audio/x-m4a", "video/ogg",
 }
 
+SUPPORTED_EXTENSIONS = {".mp3", ".ogg", ".wav", ".flac", ".m4a", ".aac", ".mp4", ".opus"}
+
 MAX_TELEGRAM_DURATION = 59 * 60  # 59 минут в секундах
 
 
@@ -57,6 +59,35 @@ async def handle_audio(message: Message, bot: Bot, db_user: User, lang: str):
     await _process_audio(
         message=message, bot=bot, db_user=db_user, lang=lang,
         file_id=audio.file_id, duration=audio.duration or 0, suffix=ext,
+    )
+
+
+@router.message(F.document)
+async def handle_document(message: Message, bot: Bot, db_user: User, lang: str):
+    """Handles audio files sent as documents (e.g. MP3 shared as a file)."""
+    doc = message.document
+    mime = doc.mime_type or ""
+    file_name = (doc.file_name or "").lower()
+
+    # Определяем расширение из имени файла
+    ext = ""
+    for supported_ext in SUPPORTED_EXTENSIONS:
+        if file_name.endswith(supported_ext):
+            ext = supported_ext
+            break
+
+    # Принимаем файл если mime-тип аудио ИЛИ расширение известное
+    is_audio_mime = mime.startswith("audio/") or mime in SUPPORTED_MIME_TYPES
+    if not is_audio_mime and not ext:
+        # Не аудиофайл — тихо игнорируем (не отвечаем на любые документы)
+        return
+
+    if not ext:
+        ext = _ext_from_mime(mime)
+
+    await _process_audio(
+        message=message, bot=bot, db_user=db_user, lang=lang,
+        file_id=doc.file_id, duration=0, suffix=ext,
     )
 
 
